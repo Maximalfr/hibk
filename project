@@ -1,0 +1,24 @@
+API REST en go:
+Sync:
+Chaque fichier unique répertorié par son path. Création d'un id unique sha1
+Pour sync 1.0: 
+- on charge tout les paths de la db
+- on charge tout les paths du répertoire
+- on compare, supprimes les musiques qui sont en db mais pas dans le répertoire.
+- on charge tous les artistes et albums en mémoire
+- on ajoute les musiques qui sont dans le répertoire mais pas dans la db.
+Les tags que l'on veut:
+- track
+- title
+- artiste
+- album
+- year
+- genre
+- disc
+On veut aussi obtenir la cover
+
+
+
+
+
+Application client side en JS:
