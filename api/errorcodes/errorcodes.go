@@ -3,8 +3,8 @@ package errorcodes
 import "net/http"
 
 type errorStruct struct {
-	Status  int
-	Message string `json: omitempty`
+	Status  int		`json:"status"`
+	Message string `json:"message" omitempty`
 }
 
 func OK() (int, errorStruct) {

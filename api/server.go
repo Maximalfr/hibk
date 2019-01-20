@@ -22,11 +22,6 @@ func Run() {
 	r.Run("localhost:8081") // listen and serve on 0.0.0.0:8080
 }
 
-type loginStruct struct {
-	Username string
-	Password string
-}
-
 func ping(c *gin.Context) {
 	c.Writer.WriteString("ping")
 }

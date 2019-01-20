@@ -13,7 +13,7 @@ import (
 )
 
 func applyAuthRoutes(r *gin.RouterGroup) {
-	r.Any("/auth", authenticate)
+	r.POST("/auth", authenticate)
 	r.POST("/register", register)
 }
 
@@ -48,7 +48,7 @@ func authenticate(c *gin.Context) {
 			c.Header("Authorization", "Bearer "+token)
 			//c.JSON(errorcodes.OK())
 			// Needed because can't read the auth header with cors
-			var jwt = struct{ Jwt_token string }{token}
+			var jwt = struct{ Jwt_token string `json:"jwt"` }{token}
 			c.JSON(200, jwt)
 		}
 

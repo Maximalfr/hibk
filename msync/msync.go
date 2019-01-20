@@ -1,11 +1,11 @@
 package msync
 
 import (
+	"log"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
-	"log"
 
 	"../models"
 	"github.com/dhowden/tag"
@@ -18,7 +18,6 @@ type Current struct {
 	Artists map[string]models.Artist
 	Albums  map[string]models.Album
 }
-
 
 type completeTrack struct {
 	Title            string
@@ -33,7 +32,6 @@ type completeTrack struct {
 	Genre            string
 	Path             string
 }
-
 
 // isValid checks file extension.
 // Return true is the file extension is contained in the function
@@ -87,7 +85,7 @@ func albumMapCreation(albumsSlice *[]models.Album) *map[string]models.Album {
 	for _, album := range *albumsSlice {
 		key := album.Name + strconv.Itoa(album.ArtistId)
 		albums[key] = album
-		}
+	}
 	return &albums
 }
 
@@ -175,7 +173,7 @@ func processing(track *completeTrack, artists *map[string]int, albums *map[strin
 	// Normally, this track ins't in the database, it's also checked in Sync function
 	// but if can have the same track with a different path.
 	newTrack := models.Track{
-		0,  // The id is useless for addTrack
+		0, // The id is useless for addTrack
 		track.Title,
 		albumId,
 		artistId,
