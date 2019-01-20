@@ -1,9 +1,8 @@
 package database
 
 import (
-	"database/sql"
-	"strconv"
 	"crypto/md5"
+	"database/sql"
 	"encoding/hex"
 
 	"../models"
@@ -100,56 +99,45 @@ func AddTrack(track *models.Track) {
 	hash := hex.EncodeToString(h.Sum(nil))
 
 	_, err = stmt.Exec(track.TrackNumber,
-						 track.Name,
-					 	 track.AlbumId,
-					 	 track.ArtistId,
-					 	 track.DiscNumber,
-					 	 track.Genre,
-						 hash,
-					 	 track.Path)
+		track.Name,
+		track.AlbumId,
+		track.ArtistId,
+		track.DiscNumber,
+		track.Genre,
+		hash,
+		track.Path)
 
 	util.EH("AddTrack", err, true)
 }
 
-
 // Get Artists list contained in the database
-func GetArtists() map[string]int {
-	var (
-		id   int
-		name string
-	)
-	artists := make(map[string]int)
+func GetArtists() *[]models.Artist {
+	var artist models.Artist
+	var artists []models.Artist
+
 	db, err := open()
 	defer db.Close()
 	util.EH("GetArtists", err, true)
 
 	rows, err := db.Query("SELECT id, name FROM artists")
-
 	util.EH("GetArtists", err, true)
-	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(&id, &name)
+		err = rows.Scan(&artist.Id, &artist.Name)
 		util.EH("GetArtists", err, true)
-
-		artists[name] = id
+		artists = append(artists, artist)
 	}
 	err = rows.Err()
 	util.EH("GetArtists", err, true)
 
-	return artists
+	return &artists
 }
 
 // Get the albums list contained in the database
-func GetAlbums() map[string]models.Album {
-	var (
-		id       int
-		name     string
-		artistID int
-		year     int
-	)
+func GetAlbums() *[]models.Album{
+	var albums []models.Album
+	var album models.Album
 
-	albums := make(map[string]models.Album)
 	db, err := open()
 	defer db.Close()
 	util.EH("GetAlbums", err, true)
@@ -157,18 +145,48 @@ func GetAlbums() map[string]models.Album {
 	rows, err := db.Query("SELECT * FROM albums")
 
 	util.EH("GetAlbums", err, true)
-	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(&id, &name, &artistID, &year)
+		err = rows.Scan(&album.Id,
+			&album.Name,
+			&album.ArtistId,
+			&album.Year)
 		util.EH("GetAlbums", err, true)
-		// The key is a concatenation of album name and artist id
-		albums[name+strconv.Itoa(artistID)] = models.Album{id, name, artistID, year}
+		albums = append(albums, album)
 	}
+
 	err = rows.Err()
 	util.EH("GetAlbums", err, true)
+	return & albums
+}
 
-	return albums
+// Get all tracks from database
+func GetTracks() *[]models.Track {
+	var tracks []models.Track
+	var track models.Track
+	var skip string // Skip the keyp value
+
+	db, err := open()
+	defer db.Close()
+	util.EH("GetTracks", err, true)
+
+	rows, err := db.Query("SELECT * FROM tracks")
+
+	for rows.Next() {
+		err = rows.Scan(&track.Id,
+			&track.TrackNumber,
+			&track.Name,
+			&track.AlbumId,
+			&track.ArtistId,
+			&track.DiscNumber,
+			&track.Genre,
+			&skip,
+			&track.Path)
+		util.EH("GetTracks", err, true)
+		tracks = append(tracks, track)
+	}
+
+	return &tracks
 }
 
 // Returns all filepaths for tracks

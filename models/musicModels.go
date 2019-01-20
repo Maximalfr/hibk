@@ -13,6 +13,7 @@ type Album struct {
 }
 
 type Track struct {
+	Id			int
 	Name        string
 	AlbumId     int
 	ArtistId    int
@@ -20,18 +21,4 @@ type Track struct {
 	DiscNumber  int
 	Genre       string
 	Path        string
-}
-
-type CompleteTrack struct {
-	Title            string
-	Album            string
-	Artist           string
-	AlbumArtist      string
-	TrackNumber      int
-	TotalTrackNumber int
-	DiscNumber       int
-	TotalDiscNumber  int
-	Year             int
-	Genre            string
-	Path             string
 }

@@ -19,6 +19,22 @@ type Current struct {
 	Albums  map[string]models.Album
 }
 
+
+type completeTrack struct {
+	Title            string
+	Album            string
+	Artist           string
+	AlbumArtist      string
+	TrackNumber      int
+	TotalTrackNumber int
+	DiscNumber       int
+	TotalDiscNumber  int
+	Year             int
+	Genre            string
+	Path             string
+}
+
+
 // isValid checks file extension.
 // Return true is the file extension is contained in the function
 func isValid(name string) bool {
@@ -55,10 +71,30 @@ func getFiles(path string) (files []string, err error) {
 	return
 }
 
+func artistMapCreation(artistsSlice *[]models.Artist) *map[string]int {
+	artists := make(map[string]int)
+
+	for _, artist := range *artistsSlice {
+		artists[artist.Name] = artist.Id
+	}
+
+	return &artists
+}
+
+func albumMapCreation(albumsSlice *[]models.Album) *map[string]models.Album {
+	albums := make(map[string]models.Album)
+
+	for _, album := range *albumsSlice {
+		key := album.Name + strconv.Itoa(album.ArtistId)
+		albums[key] = album
+		}
+	return &albums
+}
+
 func Sync(filepath string) {
 	// loading existing artists and albums
-	artists := database.GetArtists()
-	albums := database.GetAlbums()
+	artists := artistMapCreation(database.GetArtists())
+	albums := albumMapCreation(database.GetAlbums())
 
 	files, err := getFiles(filepath)
 	db_files := database.GetTracksPath()
@@ -70,15 +106,15 @@ func Sync(filepath string) {
 		if in := util.StringInSlice(file, db_files); !in {
 			track := tagReading(file)
 			if track.Title != "" {
-				processing(&track, &artists, &albums)
+				processing(&track, artists, albums)
 			}
 		}
 	}
 }
 
-// Reads tags from an audi file. Return a models.CompleteTrack
-// If an error occured, the function can return a default models.CompleteTrack
-func tagReading(filepath string) models.CompleteTrack {
+// Reads tags from an audi file. Return a completeTrack type
+// If an error occured, the function can return a default completeTrack
+func tagReading(filepath string) completeTrack {
 	file, err := os.Open(filepath)
 	util.EH("tagReading", err, true)
 
@@ -86,7 +122,7 @@ func tagReading(filepath string) models.CompleteTrack {
 	if err != nil {
 		if err.Error() == "EOF" { // Skip if the file cannot be read
 			log.Printf("%v skipped\n", filepath)
-			return models.CompleteTrack{}
+			return completeTrack{}
 		} else {
 			panic(err)
 		}
@@ -95,7 +131,7 @@ func tagReading(filepath string) models.CompleteTrack {
 	trackNumber, totalTrackNumber := t.Track()
 	discNumber, totalDiscNumber := t.Disc()
 
-	return models.CompleteTrack{
+	return completeTrack{
 		Title:            t.Title(),
 		Album:            t.Album(),
 		Artist:           t.Artist(),
@@ -109,7 +145,7 @@ func tagReading(filepath string) models.CompleteTrack {
 		Path:             filepath}
 }
 
-func processing(track *models.CompleteTrack, artists *map[string]int, albums *map[string]models.Album) {
+func processing(track *completeTrack, artists *map[string]int, albums *map[string]models.Album) {
 	// Artist
 	var artistId int
 	if track.Artist == "" {
@@ -139,6 +175,7 @@ func processing(track *models.CompleteTrack, artists *map[string]int, albums *ma
 	// Normally, this track ins't in the database, it's also checked in Sync function
 	// but if can have the same track with a different path.
 	newTrack := models.Track{
+		0,  // The id is useless for addTrack
 		track.Title,
 		albumId,
 		artistId,
