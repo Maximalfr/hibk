@@ -1,13 +1,13 @@
 package main
 
 import (
-	// "./api"
+	"./api"
 	"./database"
-	"./msync"
+	//"./msync"
 )
 
 func main() {
 	database.Init()
-	msync.Sync(".")
-	//api.Run()
+	//msync.Sync(".")
+	api.Run()
 }

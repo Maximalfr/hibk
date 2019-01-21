@@ -24,7 +24,7 @@ func applyUserRoutes(r *gin.RouterGroup) {
 
 func getUserInfo(c *gin.Context) {
 	username := getUsername(c)
-	c.JSON(200, struct{ Username string }{username})
+	c.JSON(200, struct{ Username string `json:"username"` }{username})
 }
 
 func changePwd(c *gin.Context) {

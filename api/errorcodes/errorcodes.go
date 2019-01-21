@@ -3,7 +3,7 @@ package errorcodes
 import "net/http"
 
 type errorStruct struct {
-	Status  int		`json:"status"`
+	Status  int    `json:"status"`
 	Message string `json:"message" omitempty`
 }
 

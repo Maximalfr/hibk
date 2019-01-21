@@ -18,6 +18,7 @@ func Run() {
 	authRequired.Any("/ping", ping)
 
 	applyUserRoutes(authRequired)
+	applyMusicRoutes(authRequired)
 
 	r.Run("localhost:8081") // listen and serve on 0.0.0.0:8080
 }
