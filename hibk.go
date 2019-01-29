@@ -1,8 +1,8 @@
 package main
 
 import (
-	"./api"
-	"./database"
+	"github.com/Maximalfr/hibk/api"
+	"github.com/Maximalfr/hibk/database"
 	//"./msync"
 )
 
