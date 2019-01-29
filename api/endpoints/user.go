@@ -1,12 +1,12 @@
-package api
+package endpoints
 
 import (
 	"log"
 	"net/http"
 
-	"github.com/Maximalfr/hibk/database"
 	"github.com/Maximalfr/hibk/api/apiutils"
 	"github.com/Maximalfr/hibk/api/errorcodes"
+	"github.com/Maximalfr/hibk/database"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -24,7 +24,9 @@ func applyUserRoutes(r *gin.RouterGroup) {
 
 func getUserInfo(c *gin.Context) {
 	username := getUsername(c)
-	c.JSON(200, struct{ Username string `json:"username"` }{username})
+	c.JSON(200, struct {
+		Username string `json:"username"`
+	}{username})
 }
 
 func changePwd(c *gin.Context) {

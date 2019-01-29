@@ -1,6 +1,8 @@
 package api
 
 import (
+	"github.com/Maximalfr/hibk/api/endpoints"
+	"github.com/Maximalfr/hibk/api/jwt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,17 +12,16 @@ func Run() {
 	r.Use(CORSMiddleware())
 	api := r.Group("/api")
 	api.Any("/ping", ping)
-	applyAuthRoutes(api)
+	endpoints.ApplyAnonRoutes(api)
 
 	// Authentification required for this group
 	authRequired := api.Group("/a")
-	authRequired.Use(jwtMiddleware())
+	authRequired.Use(jwt.JwtMiddleware())
 	authRequired.Any("/ping", ping)
 
-	applyUserRoutes(authRequired)
-	applyMusicRoutes(authRequired)
+	endpoints.ApplyAuthRoutes(authRequired)
 
-	r.Run("localhost:8081") // listen and serve on 0.0.0.0:8080
+	r.Run("localhost:8081") // listen and serve on 0.0.0.0:8081
 }
 
 func ping(c *gin.Context) {

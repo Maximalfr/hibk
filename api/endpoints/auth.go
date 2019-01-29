@@ -1,13 +1,14 @@
-package api
+package endpoints
 
 import (
 	"errors"
 	"log"
 	"strings"
 
-	"github.com/Maximalfr/hibk/database"
 	"github.com/Maximalfr/hibk/api/apiutils"
 	"github.com/Maximalfr/hibk/api/errorcodes"
+	"github.com/Maximalfr/hibk/api/jwt"
+	"github.com/Maximalfr/hibk/database"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -39,7 +40,7 @@ func authenticate(c *gin.Context) {
 	}
 
 	if samePwd { // If it's the same password
-		token, err := getToken(ar.Username) // Generate the jwt
+		token, err := jwt.GetToken(ar.Username) // Generate the jwt
 		if err != nil {
 			c.AbortWithStatusJSON(errorcodes.InternalError(err.Error()))
 			log.Println("Error generating JWT token: " + err.Error())
@@ -48,7 +49,9 @@ func authenticate(c *gin.Context) {
 			c.Header("Authorization", "Bearer "+token)
 			//c.JSON(errorcodes.OK())
 			// Needed because can't read the auth header with cors
-			var jwt = struct{ Jwt_token string `json:"jwt"` }{token}
+			var jwt = struct {
+				Jwt_token string `json:"jwt"`
+			}{token}
 			c.JSON(200, jwt)
 		}
 
