@@ -5,9 +5,9 @@ import (
 	"log"
 	"strings"
 
-	"../database"
-	"./apiutils"
-	"./errorcodes"
+	"github.com/Maximalfr/hibk/database"
+	"github.com/Maximalfr/hibk/api/apiutils"
+	"github.com/Maximalfr/hibk/api/errorcodes"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )

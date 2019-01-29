@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"../models"
+	"github.com/Maximalfr/hibk/models"
 )
 
 func initUser(db *sql.DB) {

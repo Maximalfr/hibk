@@ -1,9 +1,9 @@
 package api
 
 import (
-	"../database"
+	"github.com/Maximalfr/hibk/database"
     // "./errorcodes"
-	"../models"
+	"github.com/Maximalfr/hibk/models"
 	"github.com/gin-gonic/gin"
 )
 

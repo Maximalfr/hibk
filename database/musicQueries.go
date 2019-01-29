@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"encoding/hex"
 
-	"../models"
-	"../util"
+	"github.com/Maximalfr/hibk/models"
+	"github.com/Maximalfr/hibk/util"
 
 	_ "github.com/go-sql-driver/mysql"
 )

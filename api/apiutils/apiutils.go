@@ -3,7 +3,7 @@ package apiutils
 import (
 	"log"
 
-	"../errorcodes"
+	"github.com/Maximalfr/hibk/api/errorcodes"
 
 	"github.com/gin-gonic/gin"
 )

@@ -7,11 +7,11 @@ import (
 	"strconv"
 	"strings"
 
-	"../models"
+	"github.com/Maximalfr/hibk/models"
 	"github.com/dhowden/tag"
 
-	"../database"
-	"../util"
+	"github.com/Maximalfr/hibk/database"
+	"github.com/Maximalfr/hibk/util"
 )
 
 type Current struct {

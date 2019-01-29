@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"./errorcodes"
+	"github.com/Maximalfr/hibk/api/errorcodes"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
