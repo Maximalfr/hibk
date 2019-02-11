@@ -13,6 +13,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var ErrUserNotExist = errors.New("user doesn't exist")
+
+
 func applyAuthRoutes(r *gin.RouterGroup) {
 	r.POST("/auth", authenticate)
 	r.POST("/register", register)
@@ -31,7 +34,7 @@ func authenticate(c *gin.Context) {
 	}
 
 	samePwd, err := checkPassword(ar.Username, ar.Password)
-	if err != nil { // TODO: Handle the future custom error when the user doesn't exists
+	if err != nil {
 		if err == database.ErrDatabaseNotResponding {
 			c.AbortWithStatusJSON(errorcodes.InternalError(err.Error()))
 		} else {
@@ -100,7 +103,7 @@ func checkPassword(username string, password string) (bool, error) {
 		return false, err
 	}
 	if len(user.Username) == 0 || len(user.Password) == 0 {
-		return false, errors.New("This user doesn't exists") // TODO: Make a custom error
+		return false, ErrUserNotExist
 	}
 
 	res := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
