@@ -20,8 +20,8 @@ func getUsername(c *gin.Context) string {
 
 // applyUserRoutes applies routes for user endpoints
 func applyUserRoutes(r *gin.RouterGroup) {
-	r.POST("/changepwd", changePwd)
-	r.GET("/userinfo", getUserInfo)
+	r.PUT("/password", changePwd)
+	r.GET("/user", getUserInfo)
 }
 
 // getUserInfo sends user info to the client

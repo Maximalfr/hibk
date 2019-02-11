@@ -17,7 +17,7 @@ var ErrUserNotExist = errors.New("user doesn't exist")
 
 
 func applyAuthRoutes(r *gin.RouterGroup) {
-	r.POST("/auth", authenticate)
+	r.POST("/login", authenticate)
 	r.POST("/register", register)
 }
 
@@ -52,12 +52,12 @@ func authenticate(c *gin.Context) {
 
 		} else { // Send the confirmation
 			c.Header("Authorization", "Bearer "+token)
-			//c.JSON(errorcodes.OK())
+			c.JSON(errorcodes.OK())
 			// Needed because can't read the auth header with cors
-			var jwt = struct {
-				Jwt_token string `json:"jwt"`
-			}{token}
-			c.JSON(200, jwt)
+			// var jwt = struct {
+			// 	Jwt_token string `json:"jwt"`
+			// }{token}
+			// c.JSON(200, jwt)
 		}
 
 	} else { // Wrong password
