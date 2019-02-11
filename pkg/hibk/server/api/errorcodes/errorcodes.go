@@ -11,6 +11,10 @@ func OK() (int, errorStruct) {
 	return http.StatusOK, errorStruct{0, "ok"}
 }
 
+func Created() (int, errorStruct) {
+    return http.StatusCreated, errorStruct{0, "created"}
+}
+
 // Auth
 func BadPassword() (int, errorStruct) {
 	return http.StatusUnauthorized, errorStruct{1, "bad password"}

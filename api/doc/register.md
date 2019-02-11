@@ -28,14 +28,14 @@ Used to register an user in the app.
 
 ## Success Response
 
-**Code** : `200 OK`
+**Code** : `201 CREATED`
 
 **Content example**
 
 ```json
 {
   "status": 0,
-  "message": "ok"
+  "message": "created"
 }
 ```
 

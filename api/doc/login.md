@@ -32,8 +32,9 @@ Used to collect a Token for a registered User. The token will be returned in the
 
 **Header example**
 
-```
+```yaml
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTAwNzkwNzAsInVzZXJuYW1lIjoidXNlcm5hbWUifQ.XZvmtNBSFejAoMfZB4xrcUx_mjtIJ_FLKQjNVcqsYxA
+Content-Type: application/json
 ```
 
 **Content example**

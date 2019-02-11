@@ -91,7 +91,7 @@ func register(c *gin.Context) {
 		c.AbortWithStatusJSON(errorcodes.InternalError(err.Error()))
 		return
 	}
-	c.JSON(errorcodes.OK())
+	c.JSON(errorcodes.Created())
 }
 
 // checkPassword retrieves the user's password from the database and checks if
