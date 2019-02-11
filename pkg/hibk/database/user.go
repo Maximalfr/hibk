@@ -26,7 +26,7 @@ func initUser(db *sql.DB) {
 }
 
 // GetUser returns a user structure filled with database values
-func GetUser(username string) (user models.User, err error) {
+func GetUser(username string) (user models.DbUser, err error) {
 	db, err := open()
 	if err != nil {
 		log.Println(err)
