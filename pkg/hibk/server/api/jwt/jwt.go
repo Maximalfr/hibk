@@ -46,7 +46,7 @@ func JwtMiddleware() gin.HandlerFunc {
 		}
 		name := claims.(jwtgo.MapClaims)["username"].(string)
 
-		c.Header("username", name)
+		c.Set("username", name)
 		c.Next()
 	}
 }

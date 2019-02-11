@@ -14,13 +14,14 @@ import (
 
 // getUsername returns the username in the header (jwt)
 func getUsername(c *gin.Context) string {
-	return c.Writer.Header().Get("username") // With the jwt, the username is in the header
+	username, _ := c.Get("username") // The username is set in the context with the jwt middleware
+	return  username.(string)		// Shouldn't be empty
 }
 
 // applyUserRoutes applies routes for user endpoints
 func applyUserRoutes(r *gin.RouterGroup) {
 	r.POST("/changepwd", changePwd)
-	r.GET("/getuserinfo", getUserInfo)
+	r.GET("/userinfo", getUserInfo)
 }
 
 // getUserInfo sends user info to the client
