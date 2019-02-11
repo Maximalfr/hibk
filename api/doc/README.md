@@ -16,6 +16,7 @@ The documentation contains only relative urls, the root url is 'http://domain.tl
 Open endpoints require no Authentication.
 
 * [Login](login.md) : `POST /login/`
+* [Register](register.md) : `POST /register/`
 
 ## Endpoints that require Authentication
 
