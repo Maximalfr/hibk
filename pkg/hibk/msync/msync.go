@@ -7,13 +7,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Maximalfr/hibk/models"
+	"github.com/Maximalfr/hibk/pkg/hibk/models"
 	"github.com/dhowden/tag"
 
-	"github.com/Maximalfr/hibk/database"
-	"github.com/Maximalfr/hibk/util"
+	"github.com/Maximalfr/hibk/pkg/hibk/database"
+	"github.com/Maximalfr/hibk/pkg/hibk/util"
 )
 
+// Currents contains artists and albums contained in the database
 type Current struct {
 	Artists map[string]models.Artist
 	Albums  map[string]models.Album
@@ -51,6 +52,8 @@ func isValid(name string) bool {
 
 }
 
+// walk finds all files in the directory and adds in files just the valids files.
+// This function is needed to work with filepath.Walk. So it returns a WalkFunc
 func walk(files *[]string) filepath.WalkFunc {
 	return func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -63,12 +66,14 @@ func walk(files *[]string) filepath.WalkFunc {
 	}
 }
 
+// getFiles calls walk function
 func getFiles(path string) (files []string, err error) {
 	files = make([]string, 0)
 	err = filepath.Walk(path, walk(&files))
 	return
 }
 
+// artistMapCreation creates a map with the artist name as key and artist id as value
 func artistMapCreation(artistsSlice *[]models.Artist) *map[string]int {
 	artists := make(map[string]int)
 
@@ -79,6 +84,8 @@ func artistMapCreation(artistsSlice *[]models.Artist) *map[string]int {
 	return &artists
 }
 
+// artistMapCreation creates a map with a special key and album struct as value
+// The special key is the concatenation between the album name and the album artist id
 func albumMapCreation(albumsSlice *[]models.Album) *map[string]models.Album {
 	albums := make(map[string]models.Album)
 
@@ -89,6 +96,8 @@ func albumMapCreation(albumsSlice *[]models.Album) *map[string]models.Album {
 	return &albums
 }
 
+// Sync is the main function of music syncing. Give it a filepath and it will fill the 
+// database with all music contained in.
 func Sync(filepath string) {
 	// loading existing artists and albums
 	artists := artistMapCreation(database.GetArtists())
@@ -96,7 +105,7 @@ func Sync(filepath string) {
 
 	files, err := getFiles(filepath)
 	db_files := database.GetTracksPath()
-	if util.EH("Sync", err, false) {
+	if util.CheckErr("Sync", err, false) {
 		return
 	}
 	for _, file := range files {
@@ -110,11 +119,11 @@ func Sync(filepath string) {
 	}
 }
 
-// Reads tags from an audi file. Return a completeTrack type
+// tagReading reads tags from an audio file. Returns a completeTrack type
 // If an error occured, the function can return a default completeTrack
 func tagReading(filepath string) completeTrack {
 	file, err := os.Open(filepath)
-	util.EH("tagReading", err, true)
+	util.CheckErr("tagReading", err, true)
 
 	t, err := tag.ReadFrom(file)
 	if err != nil {
@@ -143,6 +152,11 @@ func tagReading(filepath string) completeTrack {
 		Path:             filepath}
 }
 
+// processing adds the track to the database. But before that, it searchs the
+// artist id and album id for the track. If the album or artist doesn't exists, this function
+// handles this issue and fills the database with missing values.
+// (see getArtistId)
+// (see getAlbumId)
 func processing(track *completeTrack, artists *map[string]int, albums *map[string]models.Album) {
 	// Artist
 	var artistId int
@@ -169,7 +183,7 @@ func processing(track *completeTrack, artists *map[string]int, albums *map[strin
 	albumId := getAlbumId(&album, albums)
 
 	//Track
-	// track name isn't empty, it's verify in Sync function
+	// track name isn't empty, it's verified in Sync function
 	// Normally, this track ins't in the database, it's also checked in Sync function
 	// but if can have the same track with a different path.
 	newTrack := models.Track{
@@ -184,8 +198,8 @@ func processing(track *completeTrack, artists *map[string]int, albums *map[strin
 	database.AddTrack(&newTrack)
 }
 
-// Return the id for an artist in database. If this artist doesn't exists, the function
-// creates it and return the new id
+// getArtistId returns the id for an artist in database. If this artist doesn't exists, the function
+// creates it and returns the new id
 func getArtistId(name string, artists *map[string]int) int {
 	artistId := (*artists)[name]
 	if artistId == 0 {
@@ -195,6 +209,8 @@ func getArtistId(name string, artists *map[string]int) int {
 	return artistId
 }
 
+// getAlbumId returns the id for an album in database. If this album doesn't exists, the function
+// creates it and returns the new id
 func getAlbumId(albumModel *models.Album, albums *map[string]models.Album) int {
 	album := (*albums)[albumModel.Name+strconv.Itoa(albumModel.ArtistId)]
 	if (album != models.Album{}) {

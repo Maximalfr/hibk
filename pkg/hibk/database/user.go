@@ -2,12 +2,12 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 
-	"github.com/Maximalfr/hibk/models"
+	"github.com/Maximalfr/hibk/pkg/hibk/models"
 )
 
+// initUser initializes the database for the user table
 func initUser(db *sql.DB) {
 	users := `CREATE TABLE IF NOT EXISTS users(
 					id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -20,11 +20,12 @@ func initUser(db *sql.DB) {
 	for _, ex := range inits {
 		_, err := db.Exec(ex)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 	}
 }
 
+// GetUser returns a user structure filled with database values
 func GetUser(username string) (user models.User, err error) {
 	db, err := open()
 	if err != nil {
@@ -47,6 +48,8 @@ func GetUser(username string) (user models.User, err error) {
 	return
 }
 
+// RegisterUser adds a new user in the database.
+// The password needs to be hashed
 func RegisterUser(username string, password string) error {
 	db, err := open()
 	if err != nil {
@@ -60,6 +63,7 @@ func RegisterUser(username string, password string) error {
 	return nil
 }
 
+// ChangePassword changes the password for a given user
 func ChangePassword(username string, password string) (err error) {
 	db, err := open()
 	defer db.Close()

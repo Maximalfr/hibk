@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Maximalfr/hibk/api/errorcodes"
+	"github.com/Maximalfr/hibk/pkg/hibk/server/api/errorcodes"
 
 	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -17,6 +17,10 @@ var signingKey = []byte("keymaker")
 //var signingKey = keyGenerator(64)
 var ErrTokenExpired = errors.New("token")
 
+// JwtMiddleware checks the presence of the jwt in the header
+// If the header exists, it checks the token validity and put the username in the header
+// to process easily.
+// Else returns an error to the clien
 func JwtMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
@@ -47,6 +51,7 @@ func JwtMiddleware() gin.HandlerFunc {
 	}
 }
 
+// GetToken creates a new jwt token
 func GetToken(username string) (string, error) {
 	token := jwtgo.NewWithClaims(jwtgo.SigningMethodHS256, jwtgo.MapClaims{
 		"username": username,
@@ -56,6 +61,7 @@ func GetToken(username string) (string, error) {
 	return tokenString, err
 }
 
+// verifyToken checs if the jw token is valid.
 func verifyToken(tokenString string) (jwtgo.Claims, error) {
 	token, err := jwtgo.Parse(tokenString, func(token *jwtgo.Token) (interface{}, error) {
 		return signingKey, nil
@@ -67,6 +73,7 @@ func verifyToken(tokenString string) (jwtgo.Claims, error) {
 	return token.Claims, err
 }
 
+// keyGenerator generates a random key
 func keyGenerator(size int) []byte {
 	key := make([]byte, size)
 	_, err := rand.Read(key)

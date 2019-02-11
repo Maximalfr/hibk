@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Maximalfr/hibk/api/apiutils"
-	"github.com/Maximalfr/hibk/api/errorcodes"
-	"github.com/Maximalfr/hibk/database"
+	"github.com/Maximalfr/hibk/pkg/hibk/server/api/apiutils"
+	"github.com/Maximalfr/hibk/pkg/hibk/server/api/errorcodes"
+	"github.com/Maximalfr/hibk/pkg/hibk/database"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -17,11 +17,13 @@ func getUsername(c *gin.Context) string {
 	return c.Writer.Header().Get("username") // With the jwt, the username is in the header
 }
 
+// applyUserRoutes applies routes for user endpoints
 func applyUserRoutes(r *gin.RouterGroup) {
 	r.POST("/changepwd", changePwd)
 	r.GET("/getuserinfo", getUserInfo)
 }
 
+// getUserInfo sends user info to the client
 func getUserInfo(c *gin.Context) {
 	username := getUsername(c)
 	c.JSON(200, struct {
@@ -29,6 +31,7 @@ func getUserInfo(c *gin.Context) {
 	}{username})
 }
 
+// changePwd changes the password for the given user
 func changePwd(c *gin.Context) {
 	username := getUsername(c)
 	cps := struct {

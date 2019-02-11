@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"log"
 
@@ -15,8 +14,6 @@ const (
 	DB_NAME     = "hibk"
 	DB_ADDR     = "127.0.0.1:3306"
 )
-
-var ErrDatabaseNotResponding = errors.New("database: database not responding")
 
 // Opens the db and returns a db pointer
 func open() (*sql.DB, error) {
@@ -35,20 +32,13 @@ func open() (*sql.DB, error) {
 	return db, nil
 }
 
-// Calls all init functions
+// Init calls all init functions
 func Init() {
 	db, err := open()
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
-	initMusic(db) // musicQueries.go
-	initUser(db)  //userQueries.go
-}
-
-// Handles errors
-func checkErr(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
+	initMusic(db) // music.go
+	initUser(db)  //user.go
 }

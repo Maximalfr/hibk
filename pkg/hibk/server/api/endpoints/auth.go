@@ -5,10 +5,10 @@ import (
 	"log"
 	"strings"
 
-	"github.com/Maximalfr/hibk/api/apiutils"
-	"github.com/Maximalfr/hibk/api/errorcodes"
-	"github.com/Maximalfr/hibk/api/jwt"
-	"github.com/Maximalfr/hibk/database"
+	"github.com/Maximalfr/hibk/pkg/hibk/server/api/apiutils"
+	"github.com/Maximalfr/hibk/pkg/hibk/server/api/errorcodes"
+	"github.com/Maximalfr/hibk/pkg/hibk/server/api/jwt"
+	"github.com/Maximalfr/hibk/pkg/hibk/database"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -18,6 +18,8 @@ func applyAuthRoutes(r *gin.RouterGroup) {
 	r.POST("/register", register)
 }
 
+// authenticate authenticates an user and if the credentials are goods, generates a
+// a jwt and sends it to the client
 func authenticate(c *gin.Context) {
 	var ar = struct {
 		Username string
@@ -60,6 +62,7 @@ func authenticate(c *gin.Context) {
 	}
 }
 
+// register registers a new user for hibk
 func register(c *gin.Context) {
 	var newUser = struct {
 		Username string
@@ -88,6 +91,8 @@ func register(c *gin.Context) {
 	c.JSON(errorcodes.OK())
 }
 
+// checkPassword retrieves the user's password from the database and checks if
+// it matches the password sent by the client.
 func checkPassword(username string, password string) (bool, error) {
 
 	user, err := database.GetUser(username)

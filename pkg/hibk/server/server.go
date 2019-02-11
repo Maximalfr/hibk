@@ -1,12 +1,12 @@
-package api
+package server
 
 import (
-	"github.com/Maximalfr/hibk/api/endpoints"
-	"github.com/Maximalfr/hibk/api/jwt"
+	"github.com/Maximalfr/hibk/pkg/hibk/server/api/endpoints"
+	"github.com/Maximalfr/hibk/pkg/hibk/server/api/jwt"
 	"github.com/gin-gonic/gin"
 )
 
-// main function to boot up everything
+// Run is the main function to boot up everything
 func Run() {
 	r := gin.Default()
 	r.Use(CORSMiddleware())

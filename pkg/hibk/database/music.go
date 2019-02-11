@@ -5,13 +5,13 @@ import (
 	"database/sql"
 	"encoding/hex"
 
-	"github.com/Maximalfr/hibk/models"
-	"github.com/Maximalfr/hibk/util"
+	"github.com/Maximalfr/hibk/pkg/hibk/models"
+	"github.com/Maximalfr/hibk/pkg/hibk/util"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// Creates all tables for music data
+// initMusic creates all tables for music data
 func initMusic(db *sql.DB) {
 	artists := `CREATE TABLE IF NOT EXISTS artists(
 					id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -46,53 +46,53 @@ func initMusic(db *sql.DB) {
 
 	for _, ex := range inits {
 		_, err := db.Exec(ex)
-		util.EH("initMusic", err, false)
+		util.CheckErr("initMusic", err, false)
 	}
 }
 
-// Add an artist it the database
+// AddArtist adds an artist it the database
 func AddArtist(name string) int {
 	db, err := open()
-	util.EH("AddArtist", err, true)
+	util.CheckErr("AddArtist", err, true)
 	defer db.Close()
 
 	stmt, err := db.Prepare("INSERT INTO artists(name) VALUES(?)")
-	util.EH("AddArtist", err, true)
+	util.CheckErr("AddArtist", err, true)
 
 	res, err := stmt.Exec(name)
-	util.EH("AddArtist", err, true)
+	util.CheckErr("AddArtist", err, true)
 
 	lastID, err := res.LastInsertId()
-	util.EH("AddArtist", err, true)
+	util.CheckErr("AddArtist", err, true)
 
 	return int(lastID)
 }
 
-// Add an album it the database
+// AddAlbum adds an album in the database
 func AddAlbum(album *models.Album) int {
 	db, err := open()
-	util.EH("AddAlbum", err, true)
+	util.CheckErr("AddAlbum", err, true)
 	defer db.Close()
 	stmt, err := db.Prepare("INSERT INTO albums(name, album_artist_id, year) VALUES(?, ?, ?)")
-	util.EH("AddAlbum", err, true)
+	util.CheckErr("AddAlbum", err, true)
 
 	res, err := stmt.Exec(album.Name, album.ArtistId, album.Year)
-	util.EH("AddAlbum", err, true)
+	util.CheckErr("AddAlbum", err, true)
 
 	lastID, err := res.LastInsertId()
-	util.EH("AddAlbum", err, true)
+	util.CheckErr("AddAlbum", err, true)
 
 	return int(lastID)
 }
 
-// Add an album it the database
+// AddTrack adds a track in the database
 func AddTrack(track *models.Track) {
 	db, err := open()
-	util.EH("AddTrack", err, true)
+	util.CheckErr("AddTrack", err, true)
 
 	defer db.Close()
 	stmt, err := db.Prepare("INSERT INTO tracks values(NULL, ?, ?, ?, ?, ?, ?, ?, ?)")
-	util.EH("AddTrack", err, true)
+	util.CheckErr("AddTrack", err, true)
 
 	h := md5.New()
 	h.Write([]byte(track.Path))
@@ -107,60 +107,60 @@ func AddTrack(track *models.Track) {
 		hash,
 		track.Path)
 
-	util.EH("AddTrack", err, true)
+	util.CheckErr("AddTrack", err, true)
 }
 
-// Get Artists list contained in the database
+// GetArtists returns the list of artists contained in database
 func GetArtists() *[]models.Artist {
 	var artist models.Artist
 	var artists []models.Artist
 
 	db, err := open()
 	defer db.Close()
-	util.EH("GetArtists", err, true)
+	util.CheckErr("GetArtists", err, true)
 
 	rows, err := db.Query("SELECT id, name FROM artists")
-	util.EH("GetArtists", err, true)
+	util.CheckErr("GetArtists", err, true)
 
 	for rows.Next() {
 		err = rows.Scan(&artist.Id, &artist.Name)
-		util.EH("GetArtists", err, true)
+		util.CheckErr("GetArtists", err, true)
 		artists = append(artists, artist)
 	}
 	err = rows.Err()
-	util.EH("GetArtists", err, true)
+	util.CheckErr("GetArtists", err, true)
 
 	return &artists
 }
 
-// Get the albums list contained in the database
+// GetAlbums returns the list of albums contained in database
 func GetAlbums() *[]models.Album{
 	var albums []models.Album
 	var album models.Album
 
 	db, err := open()
 	defer db.Close()
-	util.EH("GetAlbums", err, true)
+	util.CheckErr("GetAlbums", err, true)
 
 	rows, err := db.Query("SELECT * FROM albums")
 
-	util.EH("GetAlbums", err, true)
+	util.CheckErr("GetAlbums", err, true)
 
 	for rows.Next() {
 		err = rows.Scan(&album.Id,
 			&album.Name,
 			&album.ArtistId,
 			&album.Year)
-		util.EH("GetAlbums", err, true)
+		util.CheckErr("GetAlbums", err, true)
 		albums = append(albums, album)
 	}
 
 	err = rows.Err()
-	util.EH("GetAlbums", err, true)
+	util.CheckErr("GetAlbums", err, true)
 	return & albums
 }
 
-// Get all tracks from database
+// GetTracks returns all tracks from database
 func GetTracks() *[]models.Track {
 	var tracks []models.Track
 	var track models.Track
@@ -168,7 +168,7 @@ func GetTracks() *[]models.Track {
 
 	db, err := open()
 	defer db.Close()
-	util.EH("GetTracks", err, true)
+	util.CheckErr("GetTracks", err, true)
 
 	rows, err := db.Query("SELECT * FROM tracks")
 
@@ -182,41 +182,41 @@ func GetTracks() *[]models.Track {
 			&track.Genre,
 			&skip,
 			&track.Path)
-		util.EH("GetTracks", err, true)
+		util.CheckErr("GetTracks", err, true)
 		tracks = append(tracks, track)
 	}
 
 	return &tracks
 }
 
-// Returns all filepaths for tracks
+// GetTracks returns a list of all filepath from tracks
 func GetTracksPath() []string {
 	db, err := open()
 	defer db.Close()
-	util.EH("GetTracksPath", err, true)
+	util.CheckErr("GetTracksPath", err, true)
 
 	// Counts the number of rows for the slice initialisation (paths)
 	var count int
 	err = db.QueryRow("SELECT count(*) FROM tracks").Scan(&count)
-	util.EH("GetTracksPath", err, true)
+	util.CheckErr("GetTracksPath", err, true)
 
 	var path string
 	paths := make([]string, count)
 
 	// Selects path for each track and put them in the paths slice
 	rows, err := db.Query("SELECT path FROM tracks")
-	util.EH("GetTracksPath", err, true)
+	util.CheckErr("GetTracksPath", err, true)
 	defer rows.Close()
 
 	i := 0
 	for rows.Next() {
 		err := rows.Scan(&path)
-		util.EH("GetTracksPath", err, false)
+		util.CheckErr("GetTracksPath", err, false)
 		paths[i] = path
 		i++
 	}
 	err = rows.Err()
-	util.EH("GetTracksPath", err, true)
+	util.CheckErr("GetTracksPath", err, true)
 
 	return paths
 }
