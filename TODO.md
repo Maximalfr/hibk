@@ -1,16 +1,22 @@
 # TODO
 
 ## GENERAL
-- Add some documentation
 - Refactor
 - Better error handling
-- Follow a logic in coding style because it's ugly af
+- Better logging
 
-## API
-### Users
-- Email address
-- Register handle username already used
+## SERVER
+
+### API
+- Make the documentation, endpoints, json, etc
+- Make a go file with structs for each endpoints
+#### Users
+  - Email address
+
 
 ## SYNC
 - Handling some missing tags
 - Write the entire operation of this file in detail
+
+## Models
+- Create a specific user which contains the password
